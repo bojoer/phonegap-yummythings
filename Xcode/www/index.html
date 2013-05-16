@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<!--
+YummyThings app
+index.html
+
+PhoneGap example application
+Created by Saul Zukauskas // @sauliuz
+PopularOwl Labs // www.popularowl.com
+@16.04.2013
+-->
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="format-detection" content="telephone=no" />
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+        <link rel="stylesheet" type="text/css" href="css/index.css" />
+        <title></title>
+        <script type="text/javascript" src="js/cordova-2.6.0.js"></script>
+        <script type="text/javascript" src="js/index.js"></script>
+        <script type="text/javascript" src="js/jquery.js"></script>
+        <script type="text/javascript" src="js/NavigationBar.js"></script>
+   
+    </head>
+    <body>
+        
+        <script type="text/javascript">
+            $( document ).ready(function() {
+
+                // Getting the last used search keyword
+                // and updating the input text field
+                var lastSearch = window.localStorage.getItem("searchTerm");
+                $("#question").val(lastSearch);
+
+                // Once share class button clicked we will
+                // show content class element on the screen
+                $(".share").click(function (e) {
+                    $('.content').toggleClass('show');
+                    e.preventDefault();
+                });
+            });
+        </script>
+     
+        
+        <script type="text/javascript" charset="utf-8">
+            
+            function callWebService(){
+                
+                
+                // We don't want API call to be made everytime
+                // button is clicked. Only if no data loaded or
+                // search keyword has changed
+                if ($('#yummy').is(':empty') || window.localStorage.getItem("searchTerm") !== $("#question").val()){
+                    
+                    // Adding spinner image until we will get response
+                    $("#yummy").append("<img class='spinner' src='img/loadinfo.net.gif' />");
+                    
+                    
+                    // Storing value in the local storage
+                    var searchTerm = $("#question").val();
+                    window.localStorage.setItem("searchTerm", searchTerm);
+                    
+                    var question = window.localStorage.getItem("searchTerm");
+                    
+                    // Log
+                    console.log("Question value from textfield: " + question);
+                    
+                    
+                    //create the request url
+                    //var url = "http://your.test.server.url/?q=" + question + "&requirePictures=true";
+                    var url = "your server url/test/?q=" + question + "&requirePictures=true";
+                    
+                    // Log
+                    console.log("Request string: " + url);
+                    
+                    
+                    // Call to web server
+                    $.get(url, function(data) {
+                          
+                          // Clear spinner
+                          $("#yummy").empty();
+                          
+                          // Add results to HTML
+                          $("#yummy").html(data);
+                          
+                          // Log received content
+                          console.log("Received string: " + data);
+                          
+                    });
+                    
+                } // end if
+                
+                
+            }//end of method
+            
+        </script>
+        
+        <div id="locationplaceholder"></div> 
+
+        <div id="menu">    
+            <input id="question" class="selection" type="text"></input>
+            <div class="share" type="button" onclick="callWebService()" id="webservice_call">Find recipes</div>
+            <div class="content" id="yummy"></div>
+        </div>
+    </body>
+</html>
